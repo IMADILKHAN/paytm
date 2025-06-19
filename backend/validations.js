@@ -6,4 +6,9 @@ const signupSchema = zod.object({
     password:   zod.string().min(6,"password must be atleast 6 charachters")
 });
 
-module.exports = {signupSchema}
+const signinSchema = zod.object({
+    email:  zod.string().email("Invalid Email"), 
+    password:   zod.string().min(6,"password must be atleast 6 charachters")
+});
+
+module.exports = {signupSchema,signinSchema}

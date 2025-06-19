@@ -1,11 +1,16 @@
 const express = require("express");
+const cors = require("cors");
 const User = require("./db");
 const { signupSchema } = require("./validations");
-
+const mainRouter = require("./routes/index");
 const app = express();
-
+app.use(cors()); // for adding cors
 app.use(express.json()); // for parsing JSON bodies;
 
+
+
+
+app.use("/api/v1",mainRouter);
 
 
 
@@ -24,46 +29,9 @@ app.get("/",function(req,res){
     })
 })
 
-app.get('/signin', async function(req,res){
 
-    const {email,password} = req.body; 
-    const user = await User.findOne({email}); 
-    if(!user){
-        return res.status(400).json({
-            messsage: "Invalid username or password"
-        })
-    }
-    const isMatch = await user.comparePassword(password); 
-    if(!isMatch){
-        return res.status(400).json({
-            message:"Invalid username or password"
-        })
-    }
-    res.json({
-        message:"Login Succesfull"
-    })
-})
 
-app.get("/signup",async function(req,res){
-    const parseResult = signupSchema.safeParse(req.body); 
-    if(!parseResult.success){
-        return res.status(400).json({
-            errors:parseResult.error.flatten().fieldErrors,
-        });
-    }
-    const {name,email,password} = req.body; 
-    try{
-        const newUser = new User({name,email,password});
-        await newUser.save()
-        res.status(200).json({
-            message:"User registered successfully"
-        })
-    }
-    catch(err){
-        console.log(err); 
-        res.status(500).json({message:"registration failed"})
-    }
-})
+
 
 app.put("/editProfile",async function(req,res){
     const {name,email,password} = req.body; 
