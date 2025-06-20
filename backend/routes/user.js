@@ -1,7 +1,7 @@
 const express =require('express'); 
 const router = express.Router(); 
 const zod = require("zod"); 
-const {User} = require("../db")
+const {User, Account} = require("../db")
 const jwt_secret = require('../config');
 const jwt = require("jsonwebtoken");
 const { signupSchema, signinSchema } = require('../validations');
@@ -51,6 +51,12 @@ router.post("/signup",async function(req,res){
     try{
         const newUser = new User({name,email,password});
         await newUser.save()
+        const randomNum = Math.floor(Math.random() * 10000) + 1; 
+        const userAccount = new Account({
+            userId:newUser._id,
+            balance:randomNum
+        });
+        await userAccount.save();
         const token = jwt.sign({
             email
         },jwt_secret.JWT_SECRET)
